@@ -48,28 +48,25 @@ create_window <- function(
 ) {
   result <- data.frame()
   w.bounds <- window_bounds(idx, w_size, align)
-  d.size <- ifelse(is.data.frame(data), nrow(data), length(data))
+  # if data is given, use data as values otherwise use the keys as data
+  values <- (if(!is.null(data)) data else keys)
+  v.size <- (if(is.data.frame(values)) nrow(values) else length(values))
   # reset boundaries based on the data availability
-  w.bounds[[1]] <- ifelse(w.bounds[[1]] < 1, 1, w.bounds[[1]])
-  w.bounds[[2]] <- ifelse(w.bounds[[2]] > d.size, d.size, w.bounds[[2]])
+  w.bounds[[1]] <- (if(w.bounds[[1]] < 1) 1 else w.bounds[[1]])
+  w.bounds[[2]] <- (if(w.bounds[[2]] > v.size) v.size else w.bounds[[2]])
   # calculate actual window size
   w.size <- w.bounds[[2]] - w.bounds[[1]] + 1
   # only proceed if the window contains data, partial is accepted or
   # the actual window size equals the desired window size
   if ( w.size > 0 && (partial || w.size == w_size)) {
-    # default use the keys as values
-    values <- keys
-    # if data is given, use data as values
-    if (!is.null(data)) {
-      values <- data
-    }
     # treat data frames differently
     if (is.data.frame(values)) {
       # filter by bounds (not using slice, to be compatible with rel. dbs)
-      result <- filter(values,
-                       row_number() >= w.bounds[[1]],
-                       row_number() <= w.bounds[[2]]
-      )
+      result <- values %>%
+        filter(
+          row_number() >= w.bounds[[1]],
+          row_number() <= w.bounds[[2]]
+        )
       # add key column
       result <- mutate(result, key = keys[[idx]])
     } else {
@@ -124,6 +121,8 @@ create_windows <- function(
 #' @examples
 #' df.test <- data.frame( x=1:100, y=1:100*2 )
 #' nest_windows(df.test, key="x")
+#' @importFrom dplyr group_by
+#' @importFrom tidyr nest
 #' @export
 nest_windows <- function(data, key=NULL, w_size=10, ...) {
   return(

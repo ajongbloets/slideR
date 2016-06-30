@@ -14,7 +14,8 @@ Depends:
     R (>= 3.1)
 Imports:
     dplyr,
-    purrr
+    purrr,
+    tidyr
 Suggests:
     testthat
 RoxygenNote: 5.0.1
