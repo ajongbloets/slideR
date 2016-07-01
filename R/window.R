@@ -40,7 +40,7 @@ window_bounds <- function( idx, w_size, align="center" ) {
 #'    "center" means: idx is in the middle between lower and upper bound.
 #'    "left" means: idx is on the left, so idx == lower bound.
 #'    "right" means: idx is on the right, so idx == upper bound.
-#' @return A data.frame with all values within the window.
+#' @return The subset of keys (or data) that are in the window
 #' @importFrom dplyr filter row_number mutate
 #' @export
 create_window <- function(
@@ -63,15 +63,9 @@ create_window <- function(
     if (is.data.frame(values)) {
       # filter by bounds (not using slice, to be compatible with rel. dbs)
       result <- values %>%
-        filter(
-          row_number() >= w.bounds[[1]],
-          row_number() <= w.bounds[[2]]
-        )
-      # add key column
-      result <- mutate(result, key = keys[[idx]])
+        filter(row_number() >= w.bounds[[1]], row_number() <= w.bounds[[2]])
     } else {
       result <- values[w.bounds[[1]]:w.bounds[[2]]]
-      result <- data.frame(data=result, key=keys[[idx]])
     }
   }
   return(result)
@@ -86,10 +80,9 @@ create_window <- function(
 #' @param ... Arguments that should be passed to the create_window function
 #' @return A data.frame with all windows along with corresponding key.
 #' @importFrom dplyr select_ arrange_
+#' @importFrom purrr partial
 #' @export
-create_windows <- function(
-  data, key=NULL, w_size=10, ...
-) {
+create_windows <- function(data, key=NULL, w_size=10, ...) {
   # stop if data is not a list and key is null
   stopifnot( !is.data.frame(data) || !is.null(key))
   # get the number of points in the source
@@ -100,34 +93,14 @@ create_windows <- function(
   if (is.data.frame(data) && !is.null(keys)) {
     keys <- unlist(data %>% arrange_(key) %>% select_(key))
   }
-  # Create a window for each key and bind them into one data.frame
+  # prefill create window with variables
+  fun <- partial(create_window, keys=keys, data=data, w_size=w_size, ...)
+  # create sliding windows as a nested dataset and calculate window sizes
   return(
-    map(
-      seq_along(keys),
-      ~create_window(., keys=keys, data=data, w_size=w_size, ...)
-    ) %>% bind_rows()
-  )
-}
-
-#' Creates sliding windows from the data and returns them as a nested data.frame
-#'
-#' Basically a wrapper around create_windows and nest
-#'
-#' @param data A vector, list or data.frame
-#' @param key If data is data.frame,
-#' provide a column name that serves as key for each window
-#' @param w_size The size of the windows
-#' @return A nested data.frame with two columns: "key" and "data"
-#' @examples
-#' df.test <- data.frame( x=1:100, y=1:100*2 )
-#' nest_windows(df.test, key="x")
-#' @importFrom dplyr group_by
-#' @importFrom tidyr nest
-#' @export
-nest_windows <- function(data, key=NULL, w_size=10, ...) {
-  return(
-    create_windows(data, key=key, w_size=w_size, ...) %>%
-      group_by(key) %>%
-      nest()
+    data.frame( key = keys) %>%
+      mutate(
+        data = map(row_number(key), fun),
+        w_size = map(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
+      )
   )
 }

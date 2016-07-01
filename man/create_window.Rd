@@ -26,7 +26,7 @@ These windows will be removed is partial is FALSE.}
 "right" means: idx is on the right, so idx == upper bound.}
 }
 \value{
-A data.frame with all values within the window.
+The subset of keys (or data) that are in the window
 }
 \description{
 Create a window of certain size at each index of the data.
