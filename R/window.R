@@ -101,6 +101,7 @@ create_windows <- function(data, key=NULL, w_size=10, ...) {
       mutate(
         data = map(row_number(key), fun),
         w_size = map(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
-      )
+      ) %>%
+      filter(w_size > 0)
   )
 }
