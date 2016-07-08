@@ -94,7 +94,7 @@ create_windows <- function(data, key=NULL, w_size=10, ...) {
     keys <- unlist(data %>% arrange_(key) %>% select_(key))
   }
   # prefill create window with variables
-  fun <- partial(create_window, keys=keys, data=data, w_size=w_size, ...)
+  fun <- partial(create_window, keys=keys, data=data, w_size=w_size, ..., .lazy=F)
   # create sliding windows as a nested dataset and calculate window sizes
   return(
     data.frame( key = keys) %>%
