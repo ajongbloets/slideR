@@ -80,7 +80,7 @@ create_window <- function(
 #' @param ... Arguments that should be passed to the create_window function
 #' @return A data.frame with all windows along with corresponding key.
 #' @importFrom dplyr select_ arrange_
-#' @importFrom purrr partial
+#' @importFrom purrr partial map_dbl
 #' @export
 create_windows <- function(data, key=NULL, w_size=10, ...) {
   # stop if data is not a list and key is null
@@ -100,7 +100,7 @@ create_windows <- function(data, key=NULL, w_size=10, ...) {
     data.frame( key = keys) %>%
       mutate(
         data = map(row_number(key), fun),
-        w_size = map(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
+        w_size = map_dbl(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
       ) %>%
       filter(w_size > 0)
   )

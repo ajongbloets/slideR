@@ -66,5 +66,28 @@ test_that("test create_windows",{
     sum(map_dbl(df.windows$data, length)),
     length(df.test)*w.size - sum(1:(w.size-1))
   )
-
 })
+
+## DO NOT RUN IN TEST
+if (FALSE) {
+  # install.packages("microbenchmark")
+  library(microbenchmark)
+  library(tidyr)
+  library(zoo)
+  # simple mean calculation using a vector
+  w.size <- 10
+  df.test <- 1:500
+  microbenchmark(
+    unlist(map(create_windows(df.test, w_size=w.size, partial=F)$data, mean)),
+    rollapply(df.test, w.size, (mean)),
+    rollmean(df.test, w.size)
+  )
+  # linear model fitting
+  # w.size <- 20
+  # df.test <- beaver1 %>% mutate(time_h = time %/% 100 + 24*(day - day[1]) + (time %% 100)/60)
+  # microbenchmark(
+  #   create_windows(df.test, key="time_h", w_size=w.size, partial=F) %>%
+  #     mutate(model = map(data, ~lm(temp ~ time_h, data=.))),
+  #   mmpr::roll_window
+  # )
+}
