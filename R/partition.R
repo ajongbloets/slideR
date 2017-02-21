@@ -8,7 +8,7 @@
 #'    "right" means: idx is on the right, so idx == upper bound.
 #' @return A vector of length 2 containing the lower and upper bound.
 #' @export
-window_bounds <- function( idx, w_size, align="center" ) {
+window_boundaries <- function( idx, w_size, align="center" ) {
   lwr <- NA
   upr <- NA
   if (align == "center") {
@@ -43,11 +43,11 @@ window_bounds <- function( idx, w_size, align="center" ) {
 #' @return The subset of keys (or data) that are in the window
 #' @importFrom dplyr filter row_number mutate
 #' @export
-create_window <- function(
+partition_window <- function(
   idx, w_size, keys, data=NULL, partial=T, align="center", ...
 ) {
   result <- data.frame()
-  w.bounds <- window_bounds(idx, w_size, align)
+  w.bounds <- window_boundaries(idx, w_size, align)
   # if data is given, use data as values otherwise use the keys as data
   values <- (if(!is.null(data)) data else keys)
   v.size <- (if(is.data.frame(values)) nrow(values) else length(values))
@@ -69,39 +69,4 @@ create_window <- function(
     }
   }
   return(result)
-}
-
-#' Create windows of data, using keys in column key
-#'
-#' @param data A data.frame or list of data points
-#' @param key Name of column in data (if data is data.frame) that should be used
-#' as key for each window.
-#' @param fun Function that should be applied to each window
-#' @param ... Arguments that should be passed to the create_window function
-#' @return A data.frame with all windows along with corresponding key.
-#' @importFrom dplyr select_ arrange_
-#' @importFrom purrr partial map_dbl
-#' @export
-create_windows <- function(data, key=NULL, w_size=10, ...) {
-  # stop if data is not a list and key is null
-  stopifnot( !is.data.frame(data) || !is.null(key))
-  # get the number of points in the source
-  k.size <- ifelse(is.data.frame(data), nrow(data), length(data))
-  # get the keys used to identify each window
-  keys <- data
-  # select the key column from the data if a key column is given
-  if (is.data.frame(data) && !is.null(keys)) {
-    keys <- unlist(data %>% arrange_(key) %>% select_(key))
-  }
-  # prefill create window with variables
-  fun <- partial(create_window, keys=keys, data=data, w_size=w_size, ..., .lazy=F)
-  # create sliding windows as a nested dataset and calculate window sizes
-  return(
-    data.frame( key = keys) %>%
-      mutate(
-        data = map(row_number(key), fun),
-        w_size = map_dbl(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
-      ) %>%
-      filter(w_size > 0)
-  )
 }

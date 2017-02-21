@@ -1,7 +1,7 @@
 Package: slider
 Type: Package
 Title: Create sliding windows using the purrr package
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
   person(
     "Joeri", "Jongbloets", email="joeri@jongbloets.nl", role=c("aut", "cre")
