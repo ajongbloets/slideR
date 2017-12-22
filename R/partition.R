@@ -44,7 +44,7 @@ window_boundaries <- function( idx, w_size, align="center" ) {
 #' @importFrom dplyr filter row_number mutate
 #' @export
 partition_window <- function(
-  idx, w_size, keys, data=NULL, partial=T, align="center", ...
+  idx, w_size, keys, data=NULL, partial=T, align="center"
 ) {
   result <- data.frame()
   w.bounds <- window_boundaries(idx, w_size, align)

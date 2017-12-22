@@ -22,4 +22,3 @@ A vector of length 2 containing the lower and upper bound.
 \description{
 Calculate the boundaries of a window, given a position and alignment.
 }
-

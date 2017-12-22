@@ -5,7 +5,7 @@
 \title{Create a window of certain size at each index of the data.}
 \usage{
 partition_window(idx, w_size, keys, data = NULL, partial = T,
-  align = "center", ...)
+  align = "center")
 }
 \arguments{
 \item{idx}{The index of the window key.}
@@ -31,4 +31,3 @@ The subset of keys (or data) that are in the window
 \description{
 Create a window of certain size at each index of the data.
 }
-

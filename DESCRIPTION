@@ -1,21 +1,22 @@
 Package: slider
 Type: Package
 Title: Create sliding windows using the purrr package
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
   person(
     "Joeri", "Jongbloets", email="joeri@jongbloets.nl", role=c("aut", "cre")
   ))
 Description: SlideR creates sliding windows from vectors, lists and data.frames
     using the map function from the purrr package.
-License: GPL (>= 3)
+License: file LICENSE
 LazyData: TRUE
 Depends:
-    R (>= 3.1)
+    R (>= 3.1),
+    magrittr,
 Imports:
-    dplyr,
+    dplyr (>= 0.7.4),
     purrr,
     tidyr
 Suggests:
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

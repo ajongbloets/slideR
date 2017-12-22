@@ -2,10 +2,6 @@
 #'
 #' The slider package provides method for creating sliding windows.
 #'
-#' @section window function:
-#'
-#'
-#'
 #' @docType package
 #' @name slider
 #' @importFrom magrittr %>%

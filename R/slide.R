@@ -3,7 +3,7 @@
 #' @param data A data.frame or list of data points
 #' @param key Name of column in data (if data is data.frame) that should be used
 #'  as key for each window.
-#' @param fun Function that should be applied to each window
+#' @param w_size The size of the window to create
 #' @param ... Arguments that should be passed to the create_window function
 #' @return A nested data.frame with all windows along with corresponding key.
 #'
@@ -53,7 +53,7 @@ slide_windows <- function(data, key=NULL, w_sizes=10, ...) {
   w_sizes <- unique(w_sizes)
 
   result <- map(
-    w_sizes, ~slide_window(data, key=key, w_size=.x, ...)
+    w_sizes, slide_window, data=data, key=key, ...
   ) %>%
     bind_rows()
 
@@ -76,6 +76,8 @@ slide_windows <- function(data, key=NULL, w_sizes=10, ...) {
 #'  value using the function f
 #'
 #' @importFrom dplyr mutate_ select
+#' @importFrom purrr is_formula
+#' @importFrom stats setNames
 #' @export
 apply_slide_window <- function(
   data, f, key=NULL, w_size=10, .to=".out", .keep_data=T, ...

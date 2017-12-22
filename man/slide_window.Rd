@@ -12,9 +12,9 @@ slide_window(data, key = NULL, w_size = 10, ...)
 \item{key}{Name of column in data (if data is data.frame) that should be used
 as key for each window.}
 
-\item{...}{Arguments that should be passed to the create_window function}
+\item{w_size}{The size of the window to create}
 
-\item{fun}{Function that should be applied to each window}
+\item{...}{Arguments that should be passed to the create_window function}
 }
 \value{
 A nested data.frame with all windows along with corresponding key.
@@ -22,4 +22,3 @@ A nested data.frame with all windows along with corresponding key.
 \description{
 Partition data using a sliding window
 }
-

@@ -32,4 +32,3 @@ A nested data.frame with data partitioned in the data column,
 \description{
 Apply a function to each window in sliding windows of different sizes.
 }
-

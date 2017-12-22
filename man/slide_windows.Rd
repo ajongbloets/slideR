@@ -23,4 +23,3 @@ A nested data.frame with all windows of all sizes,
 \description{
 Partition data using sliding windows of different sizes
 }
-
