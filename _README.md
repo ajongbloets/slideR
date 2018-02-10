@@ -1,3 +1,5 @@
+[![Travis-CI Build Status](https://travis-ci.org/jjongbloets/slideR.svg?branch=master)](https://travis-ci.org/jjongbloets/slideR)
+
 SlideR
 ======
 
