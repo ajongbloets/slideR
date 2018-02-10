@@ -7,4 +7,5 @@
 #' @importFrom magrittr %>%
 #' @importFrom purrr map
 #' @importFrom dplyr bind_rows
+#' @importFrom rlang quo enquo quo_name !! := UQ
 NULL

@@ -39,8 +39,14 @@ test_that("test slide_window vector",{
 test_that("test slide_window data.frame", {
   # window size
   w.size <- 10
-  # test data.frame
+  # test data.frame with string
   df <- slide_window(df.test, key="x", w_size=w.size)
+  expect_equal(ncol(df), 3)
+  expect_true(is.data.frame(df$data[[1]]))
+  expect_equal(ncol(df$data[[1]]), 2)
+
+  # test data.frame with
+  df <- slide_window(df.test, key=x, w_size=w.size)
   expect_equal(ncol(df), 3)
   expect_true(is.data.frame(df$data[[1]]))
   expect_equal(ncol(df$data[[1]]), 2)
@@ -72,6 +78,17 @@ test_that("test apply_slide_window vector", {
 
   expect_true(".out" %in% colnames(df))
 
+  df <- apply_slide_window(
+    v.test, mean, w_size=w.size, partial=F, .to="bla"
+  )
+  expect_true("bla" %in% colnames(df))
+
+  df <- apply_slide_window(
+    v.test, mean, w_size=w.size, partial=F, .keep_data = F
+  )
+
+  expect_false("data" %in% colnames(df))
+
 })
 
 test_that("test apply_slide_window data.frame", {
@@ -84,7 +101,10 @@ test_that("test apply_slide_window data.frame", {
   expect_true(".out" %in% colnames(df))
   expect_equal(unique(df$w_size), w.sizes)
   expect_equal(mean(df$data[[1]]$x), df$.out[[1]])
+
 })
+
+
 
 ## DO NOT RUN IN TEST
 if (FALSE) {

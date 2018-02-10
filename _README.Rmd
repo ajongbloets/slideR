@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+[![Travis-CI Build Status](https://travis-ci.org/jjongbloets/slideR.svg?branch=master)](https://travis-ci.org/jjongbloets/slideR)
+
 # SlideR
 
 SlideR: An R package for Sliding Windows using dplyr, purrr and tidyr.

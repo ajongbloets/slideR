@@ -7,33 +7,45 @@
 #' @param ... Arguments that should be passed to the create_window function
 #' @return A nested data.frame with all windows along with corresponding key.
 #'
-#' @importFrom dplyr select_ arrange_
+#' @importFrom dplyr select arrange rename
 #' @importFrom purrr partial map_dbl
 #' @export
 slide_window <- function(data, key=NULL, w_size=10, ...) {
-  # stop if data is not a list and key is null
+  key <- enquo(key) %>% resolve.quosure()
+
+  # stop if data is a data.frame and key is null
   stopifnot( !is.data.frame(data) || !is.null(key))
+
   # get the number of points in the source
   k.size <- ifelse(is.data.frame(data), nrow(data), length(data))
   # get the keys used to identify each window
   keys <- data
   # select the key column from the data if a key column is given
-  if (is.data.frame(data) && !is.null(keys)) {
-    keys <- unlist(data %>% arrange_(key) %>% select_(key))
+  if (is.data.frame(data)) {
+    stopifnot(quo_name(key) %in% colnames(data))
+
+    keys <- unlist(data %>% arrange(UQ(key)) %>% select(UQ(key)))
   }
   # prefill create window with variables
   f <- partial(
     partition_window, keys=keys, data=data, w_size=w_size, ..., .lazy=F
   )
   # create sliding windows as a nested dataset and calculate window sizes
-  return(
-    data.frame( key = keys) %>%
-      mutate(
-        data = map(row_number(key), f),
-        w_size = map_dbl(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
-      ) %>%
-      filter(w_size > 0)
-  )
+  result <- data.frame( key = keys) %>%
+    mutate(
+      data = map(row_number(key), f),
+      w_size = map_dbl(data, ~ifelse(is.data.frame(.), nrow(.), length(.)))
+    ) %>%
+    filter(w_size > 0)
+
+  if (!is.null(key)) {
+    key_name <- quo_name(key)
+
+    result <- result %>%
+      rename(UQ(key_name) := key)
+  }
+
+  return(result)
 }
 
 #' Partition data using sliding windows of different sizes
@@ -47,13 +59,15 @@ slide_window <- function(data, key=NULL, w_size=10, ...) {
 #'  with `key` column containing windows keys and `w_size` with window size.
 #'
 #' @importFrom purrr map
+#' @importFrom dplyr bind_rows
 #' @export
 slide_windows <- function(data, key=NULL, w_sizes=10, ...) {
 
+  key <- enquo(key)
   w_sizes <- unique(w_sizes)
 
   result <- map(
-    w_sizes, slide_window, data=data, key=key, ...
+      w_sizes, slide_window, data=data, key=UQ(key), ...
   ) %>%
     bind_rows()
 
@@ -84,16 +98,15 @@ apply_slide_window <- function(
 ) {
 
   stopifnot(is.function(f) || is_formula(f))
+  key <- enquo(key)
+  .to <- enquo(.to) %>% resolve.quosure()
 
   if (is.null(.to)) {
     .to <- as.character(quote(f))
   }
-  # dots <- setNames(list(f), .to)
-  dots <- setNames(list(~map(data, f)), .to)
 
-  result <- slide_window(data, key=key, w_size=w_size, ...) %>%
-    # by_row(f, .to=.to)
-    mutate_(.dots = dots)
+  result <- slide_window(data, key=UQ(key), w_size=w_size, ...) %>%
+    mutate(UQ(quo_name(.to)) := map(data, f))
 
   if (!.keep_data) {
     result <- result %>% select(-data)
@@ -118,17 +131,18 @@ apply_slide_window <- function(
 #'  value using the function f
 #'
 #' @importFrom purrr map
-#' @importFrom dplyr bind_rows
 #' @export
 apply_slide_windows <- function(
   data, f, key=NULL, w_sizes=10, .to=".out", .keep_data=T, ...
 ) {
 
+  key <- enquo(key)
+  .to <- enquo(.to)
   w_sizes <- unique(w_sizes)
 
   result <- map(
     w_sizes, ~apply_slide_window(
-      data, f=f, key=key, w_size=.x, .to=.to, .keep_data=.keep_data, ...
+      data, f=f, key=UQ(key), w_size=.x, .to=UQ(.to), .keep_data=.keep_data, ...
     )
   ) %>%
     bind_rows()

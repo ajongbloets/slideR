@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+cran-comments.md
+_README.Rmd
+CHANGELOG.md
+^\.travis\.yml$

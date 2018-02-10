@@ -17,10 +17,9 @@ devtools::install_git("https://www.gitlab.com/mmp-uva/slider.git")
 
 The package requires the following packages:
 
-- `rlang` (`install.packages("rlang")`)
-- `dplyr` (`install.packages("tidyverse")`)
-- `purrr` (`install.packages("purrr")`)
-- `tidyr` (`install.packages("tidtyr")`)
+-   `dplyr` (`install.packages("tidyverse")`)
+-   `purrr` (`install.packages("purrr")`)
+-   `tidyr` (`install.packages("tidtyr")`)
 
 You can also install all these packages (and more) with one package:
 
@@ -49,13 +48,6 @@ df <- data.frame(x = 1:100, y=c("a", "b"))
 slide_window(df, key="x", w_size=10)
 ```
 
-The latest version of slideR also supports the key to be given as a variable name:
-
-``` r
-df <- data.frame(x = 1:100, y=c("a", "b"))
-slide_window(df, key=x, w_size=10)
-```
-
 ### Partition data using multiple sliding windows
 
 It is often useful to apply multiple sliding windows to the same data, while varying the size of the window.
@@ -82,5 +74,5 @@ For data.frames it is a bit more complicated, as one needs to specify the column
 
 ``` r
 df <- data.frame(x = 1:100, y=c("a", "b"))
-apply_slide_windows(df, ~mean(.$x), key="x"", w_sizes=10)
+apply_slide_windows(df, ~mean(.$x), key="x", w_sizes=10)
 ```
