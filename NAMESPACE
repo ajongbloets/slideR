@@ -3,6 +3,7 @@
 export(apply_slide_window)
 export(apply_slide_windows)
 export(partition_window)
+export(resolve_quosure)
 export(slide_window)
 export(slide_windows)
 export(window_boundaries)

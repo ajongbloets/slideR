@@ -8,7 +8,8 @@
 #'
 #' @importFrom rlang is_empty get_env UQE
 #' @importFrom dplyr quo_name
-resolve.quosure <- function(x){
+#' @export
+resolve_quosure <- function(x){
   #if(!length(tryCatch({ls(get_env(x))}, error=function(e) "empty")))
   if (is_empty(get_env(x))) {
     if (!is.null(UQE(x))) {

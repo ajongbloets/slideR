@@ -14,6 +14,8 @@ test_that("test slide_window vector",{
   expect_equal(ncol(df), 3)
   expect_false(is.data.frame(df$data[[1]]))
   expect_type(df, "list")
+  # check number of windows
+
   # check nesting
   expect_equal(length(df$data[[1]]), 6)
   expect_equal(length(df$data[[5]]), 10)

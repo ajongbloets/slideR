@@ -12,12 +12,12 @@ test_that("test window_bounds", {
 })
 
 test_that("test partition_window", {
-  # if we make a centered window of 10 points around 1 and it may be partial,
-  # we expect 5 points, we provide a vector, so expect a vector
+  # if we make a (partial) centered window of 10 points using a vector of 50 points,
+  # we expect 6 points
   df <- partition_window(1, 10, 1:50)
   expect_equal(length(df), 6)
-  # if we make a centered window of 10 points around 5 and it may be partial,
-  # we expect 9 points
+  # if we make a centered window of 10 points starting from 5 and it may be partial,
+  # we expect 10 points
   df <- partition_window(5, 10, 1:50)
   expect_equal(length(df), 10)
   # if we make a centered window of 10 points around 6 and it may be partial,

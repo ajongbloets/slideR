@@ -4,8 +4,8 @@ context("slideR utilities")
 d <- data.frame(v1=1:2, v2=9:8)
 
 Dtest <- function(d, x="v1", y="z"){
-  x <- enquo(x) %>% resolve.quosure()
-  y <- enquo(y) %>% resolve.quosure()
+  x <- enquo(x) %>% resolve_quosure()
+  y <- enquo(y) %>% resolve_quosure()
 
   stopifnot(!is.null(x) && !is.null(y))
 

@@ -12,9 +12,9 @@ License: file LICENSE
 LazyData: TRUE
 Depends:
     R (>= 3.1),
-    magrittr,
-    rlang
 Imports:
+    magrittr,
+    rlang,
     dplyr (>= 0.7.4),
     purrr,
     tidyr

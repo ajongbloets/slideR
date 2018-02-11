@@ -1,4 +1,6 @@
 #' Calculate the boundaries of a window, given a position and alignment.
+#' In a centered window the lower and upper bound are at equal distance from the index.
+#' Unless the windows is of even size, then the upper bound is 1 position closer to the center.
 #'
 #' @param idx Index of window key
 #' @param w_size Size of window in points
@@ -7,6 +9,7 @@
 #'    "left" means: idx is on the left, so idx == lower bound.
 #'    "right" means: idx is on the right, so idx == upper bound.
 #' @return A vector of length 2 containing the lower and upper bound.
+#'
 #' @export
 window_boundaries <- function( idx, w_size, align="center" ) {
   lwr <- NA

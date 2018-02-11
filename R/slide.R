@@ -11,7 +11,7 @@
 #' @importFrom purrr partial map_dbl
 #' @export
 slide_window <- function(data, key=NULL, w_size=10, ...) {
-  key <- enquo(key) %>% resolve.quosure()
+  key <- enquo(key) %>% resolve_quosure()
 
   # stop if data is a data.frame and key is null
   stopifnot( !is.data.frame(data) || !is.null(key))
@@ -99,7 +99,7 @@ apply_slide_window <- function(
 
   stopifnot(is.function(f) || is_formula(f))
   key <- enquo(key)
-  .to <- enquo(.to) %>% resolve.quosure()
+  .to <- enquo(.to) %>% resolve_quosure()
 
   if (is.null(.to)) {
     .to <- as.character(quote(f))
