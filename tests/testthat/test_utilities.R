@@ -4,12 +4,16 @@ context("slideR utilities")
 d <- data.frame(v1=1:2, v2=9:8)
 
 Dtest <- function(d, x="v1", y="z"){
+  result <- d
+
   x <- enquo(x) %>% resolve_quosure()
   y <- enquo(y) %>% resolve_quosure()
 
-  stopifnot(!is.null(x) && !is.null(y))
+  if (!is.null(x) && !is.null(y)) {
+    result <- d %>% mutate(!!quo_name(y) := UQ(x))
+  }
 
-  d %>% mutate(!!quo_name(y) := UQ(x))
+  result
 }
 
 test_that("test resolve.quosure with strings",{
@@ -42,3 +46,9 @@ test_that("test resolve.quosure with x and y being a variable", {
   expect_equal(df.r$v2, df.r$z)
 })
 
+test_that("test resolve_quosure with NULL", {
+
+  df.r <- Dtest(d, NULL, NULL)
+  expect_equal(colnames(df.r), c("v1", "v2"))
+
+})
